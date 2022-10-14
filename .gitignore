@@ -3,4 +3,7 @@
 #.env não enviar
 /backend/api-estabelecimento/.env
 
+#/dist
+/backend/dist
+
 .DS_Store
