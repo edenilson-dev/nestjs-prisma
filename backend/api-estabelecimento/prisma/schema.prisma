@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model flyway_schema_history {
+  installed_rank Int      @id(map: "flyway_schema_history_pk")
+  version        String?  @db.VarChar(50)
+  description    String   @db.VarChar(200)
+  type           String   @db.VarChar(20)
+  script         String   @db.VarChar(1000)
+  checksum       Int?
+  installed_by   String   @db.VarChar(100)
+  installed_on   DateTime @default(now()) @db.Timestamp(6)
+  execution_time Int
+  success        Boolean
+
+  @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+model tb_associacao_prof_forn {
+  fornecedor_id     BigInt
+  profissional_id   BigInt
+  tipo_profissional String? @db.VarChar(20)
+
+  @@id([fornecedor_id, profissional_id], map: "tb_associacao_prof_forn_pk")
+}
+
+model tb_estabelecimentosaude {
+  id_estabelecimentosaude BigInt         @id @default(autoincrement())
+  cnes                    String?        @db.VarChar(45)
+  nome                    String?        @db.VarChar(255)
+  id_secretaria           BigInt?
+  tb_secretaria           tb_secretaria? @relation(fields: [id_secretaria], references: [id_secretaria], onDelete: NoAction, onUpdate: NoAction, map: "fkqsfr2p2rte9ephajliqxnx32a")
+}
+
+model tb_fornecedor {
+  id_fornecedor             BigInt    @id @default(autoincrement())
+  cnpj                      String?   @db.VarChar(255)
+  nome                      String?   @db.VarChar(255)
+  created_at                DateTime? @db.Date
+  nome_empresarial          String?   @db.VarChar
+  cep                       String?   @db.VarChar(8)
+  logradouro                String?   @db.VarChar
+  complemento               String?   @db.VarChar
+  numero                    String?   @db.VarChar(20)
+  bairro                    String?   @db.VarChar(150)
+  estado                    String?   @db.VarChar(2)
+  cidade                    String?   @db.VarChar(150)
+  email                     String?   @db.VarChar(255)
+  tipo_logradouro           String?   @db.VarChar(150)
+  ddd1                      String?   @db.VarChar(3)
+  celular                   String?   @db.VarChar(9)
+  ddd2                      String?   @db.VarChar(3)
+  contato_fixo              String?   @db.VarChar(9)
+  subclasse                 String?   @db.VarChar(10)
+  descricao_subclasse       String?   @db.VarChar(255)
+  ibge                      String?   @db.VarChar(10)
+  habilitar_vigilancia      Boolean?  @default(false)
+  inscricao_estadual        String?   @db.VarChar(150)
+  inscricao_estadual_ativo  Boolean?  @default(false)
+  inscricao_estadual_estado String?   @db.VarChar(100)
+}
+
+model tb_municipio {
+  id_municipio  BigInt          @id(map: "tb_municipio_pk")
+  nome          String          @db.VarChar(255)
+  cod_ibge      String?         @db.VarChar(50)
+  tb_secretaria tb_secretaria[]
+}
+
+model tb_profissional {
+  id              BigInt    @id(map: "tb_profissional_pk")
+  nome            String    @db.VarChar(255)
+  cpf             String?   @db.VarChar(11)
+  tipo_logradouro String?   @db.VarChar(150)
+  logradouro      String?   @db.VarChar(255)
+  numero          String?   @db.VarChar(20)
+  cep             String?   @db.VarChar(8)
+  bairro          String?   @db.VarChar(150)
+  estado          String?   @db.VarChar(20)
+  cidade          String?   @db.VarChar(100)
+  numeroregistro  String?   @db.VarChar(60)
+  dt_expedicao    DateTime? @db.Date
+  ddd1            String?   @db.VarChar(3)
+  celular         String?   @db.VarChar(9)
+  dt_nascimento   DateTime? @db.Date
+}
+
+model tb_secretaria {
+  id_secretaria           BigInt                    @id @default(autoincrement())
+  cnes                    String?                   @db.VarChar(45)
+  nome                    String?                   @db.VarChar(255)
+  municipio_id            BigInt?
+  tb_municipio            tb_municipio?             @relation(fields: [municipio_id], references: [id_municipio], onDelete: NoAction, onUpdate: NoAction, map: "tb_secretaria_fk_municio_id")
+  tb_estabelecimentosaude tb_estabelecimentosaude[]
+}
+
+model tb_setor {
+  id   BigInt  @id @default(autoincrement())
+  nome String? @db.VarChar(255)
+}
