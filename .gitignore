@@ -1,0 +1,6 @@
+/backend/api-estabelecimento/node_modules
+
+#.env não enviar
+/backend/api-estabelecimento/.env
+
+.DS_Store
